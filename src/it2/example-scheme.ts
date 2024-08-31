@@ -23,6 +23,18 @@ export const dcnScheme: Scheme<Messages, Roles> = {
       .with(
         {
           role: "seller",
+          input: { data: { _tag: "buyAttest" } },
+          output: { data: { _tag: "sellAttest" } },
+        },
+        async ({ output }) => {
+          await client.unsubscribe(output.offerId);
+          await client.send(output);
+          return true;
+        }
+      )
+      .with(
+        {
+          role: "seller",
           input: { data: { _tag: "offer", initial: true } },
           output: { data: { _tag: "offer" } },
         },
@@ -59,18 +71,6 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           return true;
         }
       )
-      .with(
-        {
-          role: "seller",
-          input: { data: { _tag: "buyAttest" } },
-          output: { data: { _tag: "sellAttest" } },
-        },
-        async ({ output }) => {
-          await client.unsubscribe(output.offerId);
-          await client.send(output);
-          return true;
-        }
-      )
       .otherwise(() => false),
   onStart: async (client, role, init) =>
     match({ role, init })
@@ -78,6 +78,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         { role: "buyer", init: { data: { _tag: "offer", initial: true } } },
         async ({ init }) => {
           await client.subscribe(init.offerId);
+          await client.send(init);
           return true;
         }
       )
