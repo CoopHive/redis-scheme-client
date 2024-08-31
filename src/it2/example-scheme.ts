@@ -14,54 +14,58 @@ type Hex = `0x${string}`;
 export const dcnScheme: Scheme<Messages, Roles> = {
   roles: ["buyer", "seller"],
   onAgent: async (client, role, input, output) =>
-    match([role, input, output])
+    match({ role, input, output })
+      .with({ output: { data: { _tag: "cancel" } } }, async ({ output }) => {
+        await client.unsubscribe(output.offerId);
+        await client.send(output);
+        return true;
+      })
       .with(
-        [P._, P._, { data: { _tag: "cancel" } }],
-        async ([_0, _1, output]) => {
-          await client.unsubscribe(output.offerId);
-          await client.send(output);
-          return true;
-        }
-      )
-      .with(
-        [
-          "seller",
-          { data: { _tag: "offer", initial: true } },
-          { data: { _tag: "offer" } },
-        ],
-        ([_, input, output]) => input.offerId == output.offerId,
-        async ([_0, _1, output]) => {
+        {
+          role: "seller",
+          input: { data: { _tag: "offer", initial: true } },
+          output: { data: { _tag: "offer" } },
+        },
+        ({ input, output }) => input.offerId == output.offerId,
+        async ({ output }) => {
           await client.subscribe(output.offerId);
           await client.send(output);
           return true;
         }
       )
       .with(
-        [P._, { data: { _tag: "offer" } }, { data: { _tag: "offer" } }],
-        ([_, input, output]) => input.offerId == output.offerId,
-        async ([_0, _1, output]) => {
+        {
+          input: { data: { _tag: "offer" } },
+          output: { data: { _tag: "offer" } },
+        },
+        ({ input, output }) => input.offerId == output.offerId,
+        async ({ output }) => {
           await client.send(output);
           return true;
         }
       )
       .with(
-        ["buyer", { data: { _tag: "offer" } }, { data: { _tag: "buyAttest" } }],
-        ([_, input, output]) =>
+        {
+          role: "buyer",
+          input: { data: { _tag: "offer" } },
+          output: { data: { _tag: "buyAttest" } },
+        },
+        ({ input, output }) =>
           input.offerId == output.offerId &&
           input.data.query == output.data.offer.query &&
           input.data.price == output.data.offer.price,
-        async ([_0, _1, output]) => {
+        async ({ output }) => {
           await client.send(output);
           return true;
         }
       )
       .with(
-        [
-          "seller",
-          { data: { _tag: "buyAttest" } },
-          { data: { _tag: "sellAttest" } },
-        ],
-        async ([_0, _1, output]) => {
+        {
+          role: "seller",
+          input: { data: { _tag: "buyAttest" } },
+          output: { data: { _tag: "sellAttest" } },
+        },
+        async ({ output }) => {
           await client.unsubscribe(output.offerId);
           await client.send(output);
           return true;
@@ -69,15 +73,15 @@ export const dcnScheme: Scheme<Messages, Roles> = {
       )
       .otherwise(() => false),
   onStart: async (client, role, init) =>
-    match([role, init])
+    match({ role, init })
       .with(
-        ["buyer", { data: { _tag: "offer", initial: true } }],
-        async ([_, init]) => {
+        { role: "buyer", init: { data: { _tag: "offer", initial: true } } },
+        async ({ init }) => {
           await client.subscribe(init.offerId);
           return true;
         }
       )
-      .with(["seller", undefined], async () => {
+      .with({ role: "seller", init: undefined }, async () => {
         await client.subscribe();
         return true;
       })
