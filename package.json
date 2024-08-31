@@ -9,6 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "redis": "^4.7.0"
+    "redis": "^4.7.0",
+    "ts-pattern": "^5.3.1"
   }
 }
