@@ -42,8 +42,9 @@ export class RedisSchemeClient<T extends ADT, R extends string>
       ).stdout.toString()
     );
     if (response === "noop") return;
-    if (!this.scheme.onAgent(this, this.role, message_, response)) {
+    if (response.offerId !== message_.offerId)
       throw new Error("Invalid response");
-    }
+    if (!this.scheme.onAgent(this, this.role, message_, response))
+      throw new Error("Invalid response");
   }
 }

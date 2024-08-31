@@ -38,7 +38,6 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           input: { data: { _tag: "offer", initial: true } },
           output: { data: { _tag: "offer" } },
         },
-        ({ input, output }) => input.offerId == output.offerId,
         async ({ output }) => {
           await client.subscribe(output.offerId);
           await client.send(output);
@@ -50,7 +49,6 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           input: { data: { _tag: "offer" } },
           output: { data: { _tag: "offer" } },
         },
-        ({ input, output }) => input.offerId == output.offerId,
         async ({ output }) => {
           await client.send(output);
           return true;
@@ -63,7 +61,6 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           output: { data: { _tag: "buyAttest" } },
         },
         ({ input, output }) =>
-          input.offerId == output.offerId &&
           input.data.query == output.data.offer.query &&
           input.data.price == output.data.offer.price,
         async ({ output }) => {
