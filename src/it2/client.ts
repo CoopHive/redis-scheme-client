@@ -1,18 +1,21 @@
 import { $ } from "bun";
 import { createClient } from "redis";
-import type { ADT, SchemeClient, Scheme, Message } from "./scheme";
+import type { ADT, Scheme, Message } from "./scheme";
+import { AbstractSchemeClient } from "./scheme";
 
-export class RedisSchemeClient<T extends ADT, R extends string>
-  implements SchemeClient<T>
-{
-  private defaultChannel = "initial_offers";
-
+export class RedisSchemeClient<
+  T extends ADT,
+  R extends string
+> extends AbstractSchemeClient<T, R> {
   constructor(
-    private scheme: Scheme<T, R>,
-    private role: R,
+    scheme: Scheme<T, R>,
+    role: R,
     private agent: string,
-    private redis = createClient()
-  ) {}
+    private redis = createClient(),
+    private defaultChannel = "initial_offers"
+  ) {
+    super(scheme, role);
+  }
 
   async start(init?: Message<T>) {
     await this.redis.connect();

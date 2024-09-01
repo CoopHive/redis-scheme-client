@@ -17,9 +17,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
     match({ role, input, output })
       .with(
         { output: { data: { _tag: "cancel" } } },
-        async ({ output }) =>
-          (await client.unsubscribe(output.offerId)) &&
-          (await client.send(output))
+        async ({ output }) => await client.subscribeSend(output)
       )
       .with(
         {
@@ -27,9 +25,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           input: { data: { _tag: "buyAttest" } },
           output: { data: { _tag: "sellAttest" } },
         },
-        async ({ output }) =>
-          (await client.unsubscribe(output.offerId)) &&
-          (await client.send(output))
+        async ({ output }) => await client.unsubscribeSend(output)
       )
       .with(
         {
@@ -37,9 +33,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           input: { data: { _tag: "offer", initial: true } },
           output: { data: { _tag: "offer" } },
         },
-        async ({ output }) =>
-          (await client.subscribe(output.offerId)) &&
-          (await client.send(output))
+        async ({ output }) => await client.subscribeSend(output)
       )
       .with(
         {
@@ -64,8 +58,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
     match({ role, init })
       .with(
         { role: "buyer", init: { data: { _tag: "offer", initial: true } } },
-        async ({ init }) =>
-          (await client.subscribe(init.offerId)) && (await client.send(init))
+        async ({ init }) => await client.subscribeSend(init)
       )
       .with(
         { role: "seller", init: undefined },
