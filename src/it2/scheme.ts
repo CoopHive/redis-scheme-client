@@ -6,7 +6,7 @@ export interface ADT {
 }
 
 /**
- * Represents a scheme for implementing a communication protocol.
+ * Represents a negotiation protocol.
  * @template T - A discriminated union representing all possible messages.
  * @template R - A string literal union of roles.
  */
@@ -58,7 +58,7 @@ export type Scheme<T extends ADT, R extends string> = {
 };
 
 /**
- * Represents a client for interacting with a scheme.
+ * Represents an infrastructure client for a negotiation scheme.
  * @template T - A discriminated union representing all possible messages.
  */
 export type SchemeClient<T extends ADT> = {
