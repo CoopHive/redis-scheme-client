@@ -29,6 +29,7 @@ export type SchemeClient<T extends ADT> = {
 export type Message<T extends ADT> = {
   pubkey: `0x${string}`;
   offerId: string;
+  initial?: boolean;
   data: T;
 };
 

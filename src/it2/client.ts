@@ -37,13 +37,20 @@ export class RedisSchemeClient<
     return true;
   }
   async send(message: Message<T>) {
-    await this.redis.publish(message.offerId, JSON.stringify(message));
+    await this.redis.publish(
+      message.initial ? this.defaultChannel : message.offerId,
+      JSON.stringify(message)
+    );
     return true;
   }
 
   private async onMessage(topic: string, message: string) {
     const message_: Message<T> = JSON.parse(message);
-    if (message_.offerId != topic) return;
+    if (
+      topic != message_.offerId &&
+      !(topic == this.defaultChannel && message_.initial)
+    )
+      return;
 
     const response = await $`${this.agent} ${JSON.stringify(message)}`;
     const response_: Message<T> | "noop" = response.json();

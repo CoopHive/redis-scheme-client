@@ -8,7 +8,7 @@ type Messages =
   | { _tag: "buyAttest"; attestation: Hex; offer: Offer }
   | { _tag: "sellAttest"; attestation: Hex; result: string };
 
-type Offer = { query: string; price: [Hex, number]; initial: boolean };
+type Offer = { query: string; price: [Hex, number] };
 type Hex = `0x${string}`;
 
 export const dcnScheme: Scheme<Messages, Roles> = {
@@ -58,7 +58,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
   onStart: async (client, role, init) =>
     match({ role, init })
       .with(
-        { role: "buyer", init: { data: { _tag: "offer", initial: true } } },
+        { role: "buyer", init: { initial: true, data: { _tag: "offer" } } },
         async ({ init }) => await client.subscribeSend(init)
       )
       .with(
