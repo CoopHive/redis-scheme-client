@@ -43,6 +43,8 @@ export class RedisSchemeClient<
 
   private async onMessage(topic: string, message: string) {
     const message_: Message<T> = JSON.parse(message);
+    if (message_.offerId != topic) return;
+
     const response = await $`${this.agent} ${JSON.stringify(message)}`;
     const response_: Message<T> | "noop" = response.json();
 
