@@ -12,11 +12,6 @@ export interface ADT {
  */
 export type Scheme<T extends ADT, R extends string> = {
   /**
-   * List of roles that can participate in the scheme.
-   */
-  roles: R[];
-
-  /**
    * Defines rules for valid responses to messages.
    * @param client - Provides methods for managing communication.
    * @param role - The agent's role in the scheme.

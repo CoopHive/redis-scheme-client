@@ -12,7 +12,6 @@ type Offer = { query: string; price: [Hex, number] };
 type Hex = `0x${string}`;
 
 export const dcnScheme: Scheme<Messages, Roles> = {
-  roles: ["buyer", "seller"],
   onAgent: async (client, role, input, output) =>
     input.offerId == output.offerId &&
     match({ role, input, output })
