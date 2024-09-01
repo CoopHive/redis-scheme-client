@@ -2,6 +2,27 @@ export interface ADT {
   _tag: string;
 }
 
+/* Scheme implementations are responsible to
+    - T: discriminated union representing all possible messages
+    - R: string literal union of roles
+
+    - roles: list of roles that can participate in the scheme
+    - onAgent: define rules for valid responses to messages
+        args:
+            client: provides an abstraction over communication infrastructure
+            role: the agent's role
+            input: message responded to
+            output: response to input
+        - subscribe, unsubscribe, and send as appropriate
+        - return true if response is valid in context, false otherwise
+    - onStart: define rules for valid initial messages
+        args:
+            client: provides an abstraction over communication infrastructure
+            role: the agent's role
+            init?: initial message
+        - subscribe, unsubscribe, and send as appropriate
+        - return true if initial message is valid for role, false otherwise
+*/
 export type Scheme<T extends ADT, R extends string> = {
   roles: R[];
   onAgent(
@@ -26,7 +47,6 @@ export type SchemeClient<T extends ADT> = {
   unsubscribeSend: (message: Message<T>) => Promise<boolean>;
 };
 
-// T should be a discriminated union representing all possible messages
 export type Message<T extends ADT> = {
   pubkey: `0x${string}`;
   offerId: string;
