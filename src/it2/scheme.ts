@@ -26,6 +26,7 @@ export type SchemeClient<T extends ADT> = {
   unsubscribeSend: (message: Message<T>) => Promise<boolean>;
 };
 
+// T should be a discriminated union representing all possible messages
 export type Message<T extends ADT> = {
   pubkey: `0x${string}`;
   offerId: string;
@@ -33,6 +34,15 @@ export type Message<T extends ADT> = {
   data: T;
 };
 
+/* SchemeClient implementations are responsible to
+    - start: connect to communication infrastructure and send init if provided
+    - subscribe: start listening for messages related to offerId, 
+        or to default channel if unspecified
+    - unsubscribe: stop listening for messages related to offerId,
+        or to default channel if unspecified
+    - send: send message to everyone interested in message.offerId,
+        or to default channel if message.initial is true
+ */
 export abstract class AbstractSchemeClient<T extends ADT, R extends string>
   implements SchemeClient<T>
 {

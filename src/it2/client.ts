@@ -33,6 +33,10 @@ export class RedisSchemeClient<
     return true;
   }
   async unsubscribe(offerId?: string) {
+    if (!offerId) {
+      await this.redis.unsubscribe(this.defaultChannel);
+      return true;
+    }
     await this.redis.unsubscribe(offerId);
     return true;
   }
