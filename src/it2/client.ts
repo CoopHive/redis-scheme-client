@@ -19,19 +19,23 @@ export class RedisSchemeClient<T extends ADT, R extends string>
     if (!(await this.scheme.onStart(this, this.role, init))) {
       throw new Error("Failed to start");
     }
+    return true;
   }
   async subscribe(offerId?: string) {
     if (!offerId) {
       await this.redis.subscribe(this.defaultChannel, this.onMessage);
-      return;
+      return true;
     }
     await this.redis.subscribe(offerId, this.onMessage);
+    return true;
   }
   async unsubscribe(offerId?: string) {
     await this.redis.unsubscribe(offerId);
+    return true;
   }
   async send(message: Message<T>) {
     await this.redis.publish(message.offerId, JSON.stringify(message));
+    return true;
   }
 
   private async onMessage(topic: string, message: string) {

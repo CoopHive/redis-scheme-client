@@ -18,10 +18,10 @@ export type Scheme<T extends ADT, R extends string> = {
 };
 
 export type SchemeClient<T extends ADT> = {
-  start: (init?: Message<T>) => Promise<void>;
-  subscribe: (offerId?: string) => Promise<void>;
-  unsubscribe: (offerId?: string) => Promise<void>;
-  send: (message: Message<T>) => Promise<void>;
+  start: (init?: Message<T>) => Promise<boolean>;
+  subscribe: (offerId?: string) => Promise<boolean>;
+  unsubscribe: (offerId?: string) => Promise<boolean>;
+  send: (message: Message<T>) => Promise<boolean>;
 };
 
 export type Message<T extends ADT> = {
