@@ -43,13 +43,11 @@ export class RedisSchemeClient<
 
   private async onMessage(topic: string, message: string) {
     const message_: Message<T> = JSON.parse(message);
-    const response: Message<T> | "noop" = JSON.parse(
-      (
-        await $`${this.agent} ${JSON.stringify({ topic, message })}`
-      ).stdout.toString()
-    );
-    if (response === "noop") return;
-    if (!this.scheme.onAgent(this, this.role, message_, response))
-      throw new Error("Invalid response");
+    const response = await $`${this.agent} ${JSON.stringify(message)}`;
+    const response_: Message<T> | "noop" = response.json();
+
+    if (response_ === "noop") return;
+    if (!(await this.scheme.onAgent(this, this.role, message_, response_)))
+      throw new Error("Invalid agent response");
   }
 }
