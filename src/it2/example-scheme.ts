@@ -21,7 +21,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         { output: { data: { _tag: "cancel" } } },
         async ({ output }) => await client.unsubscribeSend(output)
       )
-      // seller responds to buyer's attestation (payment)
+      // seller can respond to buyer's attestation (payment)
       // with their own attestation (result)
       .with(
         {
@@ -31,7 +31,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         },
         async ({ output }) => await client.unsubscribeSend(output)
       )
-      // sellers can respond to initial offers with a counteroffer
+      // seller can respond to initial offers with a counteroffer
 
       .with(
         {
@@ -50,7 +50,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         },
         async ({ output }) => await client.send(output)
       )
-      // buyers can respond to counteroffers with payment
+      // buyer can respond to counteroffers with payment
 
       .with(
         {
