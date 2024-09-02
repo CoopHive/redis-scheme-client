@@ -13,12 +13,16 @@ type Hex = `0x${string}`;
 
 export const dcnScheme: Scheme<Messages, Roles> = {
   onAgent: async (client, role, input, output) =>
+    // output is responding to input
     input.offerId == output.offerId &&
     match({ role, input, output })
+      // anyone can cancel a negotiation at any time
       .with(
         { output: { data: { _tag: "cancel" } } },
-        async ({ output }) => await client.subscribeSend(output)
+        async ({ output }) => await client.unsubscribeSend(output)
       )
+      // seller responds to buyer's attestation (payment)
+      // with their own attestation (result)
       .with(
         {
           role: "seller",
@@ -27,6 +31,8 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         },
         async ({ output }) => await client.unsubscribeSend(output)
       )
+      // sellers can respond to initial offers with a counteroffer
+
       .with(
         {
           role: "seller",
@@ -35,6 +41,8 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         },
         async ({ output }) => await client.subscribeSend(output)
       )
+      // anyone can respond to a non-initial offer with a counteroffer
+
       .with(
         {
           input: { data: { _tag: "offer" } },
@@ -42,6 +50,8 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         },
         async ({ output }) => await client.send(output)
       )
+      // buyers can respond to counteroffers with payment
+
       .with(
         {
           role: "buyer",
@@ -53,13 +63,16 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           input.data.price == output.data.offer.price,
         async ({ output }) => await client.send(output)
       )
+      // the above rules are exhaustive
       .otherwise(() => false),
   onStart: async (client, role, init) =>
     match({ role, init })
+      // buyers must join with an initial offer
       .with(
         { role: "buyer", init: { initial: true, data: { _tag: "offer" } } },
         async ({ init }) => await client.subscribeSend(init)
       )
+      // sellers must join without an initial offer
       .with(
         { role: "seller", init: undefined },
         async () => await client.subscribe()
