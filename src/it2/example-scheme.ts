@@ -32,7 +32,6 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         async ({ output }) => await client.unsubscribeSend(output)
       )
       // seller can respond to initial offers with a counteroffer
-
       .with(
         {
           role: "seller",
@@ -42,7 +41,6 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         async ({ output }) => await client.subscribeSend(output)
       )
       // anyone can respond to a non-initial offer with a counteroffer
-
       .with(
         {
           input: { data: { _tag: "offer" } },
@@ -51,7 +49,6 @@ export const dcnScheme: Scheme<Messages, Roles> = {
         async ({ output }) => await client.send(output)
       )
       // buyer can respond to counteroffers with payment
-
       .with(
         {
           role: "buyer",
