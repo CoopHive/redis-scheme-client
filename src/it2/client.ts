@@ -12,13 +12,16 @@ export class RedisSchemeClient<
     role: R,
     private agent: string,
     private redis = createClient(),
+    private redisPubSub = createClient(),
     private defaultChannel = "initial_offers"
   ) {
     super(scheme, role);
+
     this.onMessage = this.onMessage.bind(this);
   }
 
   async start(init?: Message<T>) {
+    await this.redisPubSub.connect();
     await this.redis.connect();
     if (!(await this.scheme.onStart(this, this.role, init))) {
       throw new Error("Failed to start");
@@ -27,18 +30,18 @@ export class RedisSchemeClient<
   }
   async subscribe(offerId?: string) {
     if (!offerId) {
-      await this.redis.subscribe(this.defaultChannel, this.onMessage);
+      await this.redisPubSub.subscribe(this.defaultChannel, this.onMessage);
       return true;
     }
-    await this.redis.subscribe(offerId, this.onMessage);
+    await this.redisPubSub.subscribe(offerId, this.onMessage);
     return true;
   }
   async unsubscribe(offerId?: string) {
     if (!offerId) {
-      await this.redis.unsubscribe(this.defaultChannel);
+      await this.redisPubSub.unsubscribe(this.defaultChannel);
       return true;
     }
-    await this.redis.unsubscribe(offerId);
+    await this.redisPubSub.unsubscribe(offerId);
     return true;
   }
   async send(message: Message<T>) {
@@ -52,6 +55,8 @@ export class RedisSchemeClient<
   private async onMessage(message: string, topic: string) {
     const message_: Message<T> = JSON.parse(message);
 
+    // console.log("Received message", message_);
+
     // spam filter
     if (
       topic != message_.offerId &&
@@ -59,11 +64,15 @@ export class RedisSchemeClient<
     )
       return;
 
-    const response = await $`${this.agent} ${JSON.stringify(message)}`;
+    const response = await $`${this.agent} ${message}`;
     const response_: Message<T> | "noop" = response.json();
 
+    // console.log("Agent response", response_);
+
     if (response_ === "noop") return;
-    if (!(await this.scheme.onAgent(this, this.role, message_, response_)))
-      throw new Error("Invalid agent response");
+    if (!(await this.scheme.onAgent(this, this.role, message_, response_))) {
+      console.error("Invalid agent response");
+      // throw new Error("Invalid agent response");
+    }
   }
 }

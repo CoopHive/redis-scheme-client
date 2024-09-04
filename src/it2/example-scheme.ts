@@ -35,7 +35,7 @@ export const dcnScheme: Scheme<Messages, Roles> = {
       .with(
         {
           role: "seller",
-          input: { data: { _tag: "offer", initial: true } },
+          input: { initial: true, data: { _tag: "offer" } },
           output: { data: { _tag: "offer" } },
         },
         async ({ output }) => await client.subscribeSend(output)
