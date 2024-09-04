@@ -15,6 +15,7 @@ export class RedisSchemeClient<
     private defaultChannel = "initial_offers"
   ) {
     super(scheme, role);
+    this.onMessage = this.onMessage.bind(this);
   }
 
   async start(init?: Message<T>) {
@@ -48,8 +49,10 @@ export class RedisSchemeClient<
     return true;
   }
 
-  private async onMessage(topic: string, message: string) {
+  private async onMessage(message: string, topic: string) {
     const message_: Message<T> = JSON.parse(message);
+
+    // spam filter
     if (
       topic != message_.offerId &&
       !(topic == this.defaultChannel && message_.initial)
