@@ -13,7 +13,6 @@ export class RedisSchemeClient<
   T extends ADT,
   R extends string
 > extends AbstractSchemeClient<T, R> {
-
   /**
    * Constructs a RedisSchemeClient instance.
    *
@@ -113,8 +112,11 @@ export class RedisSchemeClient<
     )
       return;
 
-    const response = await $`${this.agent} ${message}`;
-    const response_: Message<T> | "noop" = response.json();
+    const response = await fetch(this.agent, {
+      method: "POST",
+      body: JSON.stringify(message_),
+    });
+    const response_: Message<T> | "noop" = await response.json();
 
     if (response_ === "noop") return;
     if (!(await this.scheme.onAgent(this, this.role, message_, response_))) {
