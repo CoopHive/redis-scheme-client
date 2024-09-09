@@ -157,11 +157,10 @@ dist
 .tern-port
 
 # Stores VSCode versions used for testing VSCode extensions
-
 .vscode-test
 
-# yarn v2
 
+# yarn v2
 .yarn/cache
 .yarn/unplugged
 .yarn/build-state.yml
@@ -176,3 +175,5 @@ dist
 
 # Bun lock
 bun.lockb
+
+package-lock.json
