@@ -20,7 +20,7 @@ redis-server
 
 To run:
 
-Syntax: `bun run example-run.ts [role] [agent] [initial offer (buyer only)]`
+Syntax: `bun run runner.ts [role] [agent] [initial offer (buyer only)]`
 
-- seller: `bun run example-run.ts seller ./example-agent.ts`
-- buyer: `bun run example-run.ts buyer ./example-agent.ts '{"pubkey": "0x123","offerId": "offer_0","initial": true,"data": {"_tag": "offer","query": "hello","price": ["0x100", 200]}}'`
+- seller: `bun run runner.ts seller ./example-agent.ts`
+- buyer: `bun run runner.ts buyer ./example-agent.ts '{"pubkey": "0x123","offerId": "offer_0","initial": true,"data": {"_tag": "offer","query": "hello","price": ["0x100", 200]}}'`
