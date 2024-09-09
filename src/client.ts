@@ -55,7 +55,7 @@ export class RedisSchemeClient<
   private async onMessage(message: string, topic: string) {
     const message_: Message<T> = JSON.parse(message);
 
-    // console.log("Received message", message_);
+    console.log("Received message", message_);
 
     // spam filter
     if (
@@ -67,7 +67,7 @@ export class RedisSchemeClient<
     const response = await $`${this.agent} ${message}`;
     const response_: Message<T> | "noop" = response.json();
 
-    // console.log("Agent response", response_);
+    console.log("Agent response", response_);
 
     if (response_ === "noop") return;
     if (!(await this.scheme.onAgent(this, this.role, message_, response_))) {
