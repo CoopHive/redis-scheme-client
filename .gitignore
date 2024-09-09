@@ -176,4 +176,6 @@ dist
 # Bun lock
 bun.lockb
 
+.vscode
 package-lock.json
+dump.rdb
