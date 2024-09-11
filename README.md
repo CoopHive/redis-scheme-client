@@ -24,3 +24,9 @@ Syntax: `bun run runner.ts [role] [agent] [initial offer (buyer only)]`
 
 - seller: `bun run runner.ts seller ./example-agent.ts`
 - buyer: `bun run runner.ts buyer ./example-agent.ts '{"pubkey": "0x123","offerId": "offer_0","initial": true,"data": {"_tag": "offer","query": "hello","price": ["0x100", 200]}}'`
+
+Example run:
+1. `bun run example-agent/index.ts`
+2. `redis-server`
+3. `bun run runner.ts seller localhost:3000`
+4. `redis-cli`, do `publish initial_offers '{"pubkey": "0x123","offerId": "offer_0","initial": true,"data": {"_tag": "offer","query": "hello","price": ["0x100", 200]}}'`
