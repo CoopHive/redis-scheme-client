@@ -72,7 +72,10 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           await client.subscribeSend({
             ...init,
             initial: true,
-            data: { ...init.data, price: [init.data.price[0], 0] },
+            data: {
+              ...init.data,
+              price: [init.data.price[0], init.data.price[1] || 0],
+            },
           })
       )
       // sellers must join without an initial offer
