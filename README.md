@@ -22,8 +22,8 @@ To run:
 
 Syntax: `bun run runner.ts [role] [agent] [initial offer (buyer only)]`
 
-- seller: `bun run runner.ts seller ./example-agent.ts`
-- buyer: `bun run runner.ts buyer ./example-agent.ts '{"pubkey": "0x123","offerId": "offer_0","initial": true,"data": {"_tag": "offer","query": "hello","price": ["0x100", 200]}}'`
+- seller: `bun run runner.ts seller ./example-agent.ts ""  redis://default:***@***.upstash.io:6379`
+- buyer: `bun run runner.ts buyer ./example-agent.ts '{"pubkey": "0x123","offerId": "offer_0","initial": true,"data": {"_tag": "offer","query": "hello","price": ["0x100", 200]}}' redis://default:***@***.upstash.io:6379`
 
 Example run:
 1. `cd example-agent && bun run index.ts`

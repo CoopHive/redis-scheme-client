@@ -66,8 +66,14 @@ export const dcnScheme: Scheme<Messages, Roles> = {
     match({ role, init })
       // buyers must join with an initial offer
       .with(
-        { role: "buyer", init: { initial: true, data: { _tag: "offer" } } },
-        async ({ init }) => await client.subscribeSend(init)
+        { role: "buyer", init: { data: { _tag: "offer" } } },
+        async ({ init }) =>
+          // default to 0 if no price is given; token must still be given
+          await client.subscribeSend({
+            ...init,
+            initial: true,
+            data: { ...init.data, price: [init.data.price[0], 0] },
+          })
       )
       // sellers must join without an initial offer
       .with(
