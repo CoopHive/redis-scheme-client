@@ -5,11 +5,12 @@ type Roles = "buyer" | "seller";
 type Messages =
   | ({ _tag: "offer" } & Offer)
   | { _tag: "cancel"; error?: string }
-  | { _tag: "buyAttest"; attestation: Hex; offer: Offer }
+  | ({ _tag: "buyAttest"; attestation: Hex } & Offer)
   | { _tag: "sellAttest"; attestation: Hex; result: string };
 
 type Offer = { query: string; price: [Hex, number] };
 type Hex = `0x${string}`;
+
 
 export const dcnScheme: Scheme<Messages, Roles> = {
   onAgent: async (client, role, input, output) =>
@@ -56,8 +57,8 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           output: { data: { _tag: "buyAttest" } },
         },
         ({ input, output }) =>
-          input.data.query == output.data.offer.query &&
-          input.data.price == output.data.offer.price,
+          input.data.query == output.data.query &&
+          input.data.price == output.data.price,
         async ({ output }) => await client.send(output)
       )
       // the above rules are exhaustive
