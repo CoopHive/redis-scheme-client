@@ -56,9 +56,6 @@ export const dcnScheme: Scheme<Messages, Roles> = {
           input: { data: { _tag: "offer" } },
           output: { data: { _tag: "buyAttest" } },
         },
-        ({ input, output }) =>
-          input.data.query == output.data.query &&
-          input.data.price == output.data.price,
         async ({ output }) => await client.send(output)
       )
       // the above rules are exhaustive

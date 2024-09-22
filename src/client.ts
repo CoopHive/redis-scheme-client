@@ -122,6 +122,12 @@ export class RedisSchemeClient<
 
     if (response_ === "noop") return;
     if (!(await this.scheme.onAgent(this, this.role, message_, response_))) {
+
+      // Log variables for debugging
+      console.log("Role:", this.role);
+      console.log("Message:", message_);
+      console.log("Response:", response_);
+
       console.error("Invalid agent response");
     }
   }
